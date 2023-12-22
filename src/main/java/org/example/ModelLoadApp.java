@@ -48,9 +48,9 @@ public class ModelLoadApp extends Application {
     private static final int SCREEN_HEIGHT = 800;
     private static final double CIRCLE_RADIUS = 1;
     private static final Duration TRANSLATION_DURATION = Duration.seconds(10);
-    private double translationDistance = 0.1; // Adjust as needed
+    private double translationDistance = 0.5; // Adjust as needed
 
-    private Scene createScene() {
+    Scene createScene() {
         PerspectiveCamera camera = new PerspectiveCamera(true);
         camera.setTranslateZ(-35);
         camera.setFarClip(1000);
@@ -60,8 +60,11 @@ public class ModelLoadApp extends Application {
 
         Text label = new Text();
         label.setTranslateZ(650);
+        label.setTranslateY(-150);
+        label.setTranslateX(-120);
         Timer timer = new Timer();
         // Schedule the task to run every minute
+        // DEFENCE, LOGO
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -96,8 +99,8 @@ public class ModelLoadApp extends Application {
 
                         // Extract main information
                         JsonObject mainObject = jsonObject.getAsJsonObject("main");
-                        double temperature = mainObject.get("temp").getAsDouble();
-                        double temperatureFeelsLike = mainObject.get("feels_like").getAsDouble();
+                        double temperature = mainObject.get("temp").getAsDouble()/10;
+                        double temperatureFeelsLike = mainObject.get("feels_like").getAsDouble()/10;
 
                         // Now you can use cityName, mainWeather, weatherDescription, temperature, and temperatureFeelsLike
                         System.out.println("City: " + cityName);
@@ -111,7 +114,7 @@ public class ModelLoadApp extends Application {
                         b.append("City Name: ").append(cityName).append(System.lineSeparator());
                         b.append("Weather: ").append(mainWeather).append(System.lineSeparator());
                         b.append("Weather Description: ").append(weatherDescription).append(System.lineSeparator());
-                        b.append("Temperature: ").append(temperature).append(" -- ").append(temperatureFeelsLike).append(System.lineSeparator());
+                        b.append("Temperature: ").append(String.format("%.2f", temperature)).append(" C° -- ").append(String.format("%.2f", temperatureFeelsLike)).append(" C°").append(System.lineSeparator());
                         label.setText(b.toString());
 
                     } catch (Exception e) {
@@ -145,7 +148,7 @@ public class ModelLoadApp extends Application {
         return scene;
     }
 
-    private ImageView prepareImageView() {
+    ImageView prepareImageView() {
         Image image = new Image(getClass().getResourceAsStream("/jungle_background.jpg"));
         ImageView imageView = new ImageView(image);
         imageView.setPreserveRatio(true);
@@ -155,7 +158,7 @@ public class ModelLoadApp extends Application {
 
     private void createAndAnimateCircles(Group root) {
         double v = Math.random() * SCREEN_WIDTH - SCREEN_WIDTH / 2;
-        System.out.println("X: " + v);
+//        System.out.println("X: " + v);
         Circle movingCircle = new Circle(CIRCLE_RADIUS, Color.YELLOW);
         movingCircle.setTranslateX(v);
         movingCircle.setTranslateY(-SCREEN_HEIGHT / 2);
@@ -166,7 +169,7 @@ public class ModelLoadApp extends Application {
         root.getChildren().add(movingCircle);
     }
 
-    private Group loadModel(URL url) {
+    Group loadModel(URL url) {
         Group modelRoot = new Group();
 
         ObjModelImporter importer = new ObjModelImporter();
